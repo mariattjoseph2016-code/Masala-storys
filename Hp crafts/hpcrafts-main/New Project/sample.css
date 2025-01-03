@@ -1,0 +1,11 @@
+.text{
+    display: flex;
+}
+.navbar{
+    display: flex;
+}
+.text1{
+    margin: 20px;
+    font-size: 5px;
+    text-align: center;
+}
