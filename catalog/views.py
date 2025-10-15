@@ -2,9 +2,10 @@ from django.db.models import Q, Avg
 from django.db.models.functions import Coalesce
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Product, Category, Review
 from .forms import ReviewForm
+from django import forms
 
 
 def product_list(request):
@@ -38,6 +39,54 @@ def product_list(request):
         products = products.order_by('name')
 
     categories = Category.objects.all()
+    return render(request, 'catalog/product_list.html', {'products': products, 'categories': categories})
+
+# Admin privilege check
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
+# Product Form for admin actions
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'slug', 'category', 'description', 'is_active', 'thumbnail', 'stock_quantity', 'mrp', 'sale_price']
+
+# Add Product (Admin only)
+@user_passes_test(is_admin)
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product added successfully.')
+            return redirect('product_list')
+    else:
+        form = ProductForm()
+    return render(request, 'catalog/add_product.html', {'form': form})
+
+# Update Product (Admin only)
+@user_passes_test(is_admin)
+def update_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product updated successfully.')
+            return redirect('product_list')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'catalog/update_product.html', {'form': form, 'product': product})
+
+# Delete Product (Admin only)
+@user_passes_test(is_admin)
+def delete_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Product deleted successfully.')
+        return redirect('product_list')
+    return render(request, 'catalog/delete_product.html', {'product': product})
     context = {
         'products': products.distinct(),
         'categories': categories,

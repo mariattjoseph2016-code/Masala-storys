@@ -411,6 +411,9 @@
       {% if active_category %}
         <div class="category-context">in <strong>{{ active_category|title }}</strong></div>
       {% endif %}
+      {% if request.user.is_staff %}
+        <a href="{% url 'catalog:add_product' %}" class="btn btn-success ms-3">+ Add Product</a>
+      {% endif %}
     </div>
 
     <!-- Products Grid -->
@@ -462,6 +465,12 @@
             <a href="{% url 'catalog:product_detail' slug=p.slug %}" class="view-product-btn">
               <i class="bi bi-eye me-2"></i>View Details
             </a>
+            {% if request.user.is_staff %}
+              <div class="mt-2 d-flex gap-2">
+                <a href="{% url 'catalog:update_product' pk=p.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'catalog:delete_product' pk=p.pk %}" class="btn btn-sm btn-danger">Delete</a>
+              </div>
+            {% endif %}
           </div>
         </div>
       {% endfor %}
