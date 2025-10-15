@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Wishlist · Masala Story{% endblock %}
+{% block header %}My Wishlist{% endblock %}
+{% block content %}
+<style>
+.wishlist-container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  overflow: hidden;
+  position: relative;
+  margin: 2rem 0;
+  border: 1px solid #e9ecef;
+}
+
+.wishlist-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 2rem 1rem 2rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.wishlist-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wishlist-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.wishlist-content {
+  padding: 1rem 2rem 3rem 2rem;
+}
+
+.wishlist-product-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+}
+
+.wishlist-product-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.wishlist-product-card:hover::before {
+  opacity: 1;
+}
+
+.wishlist-product-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.wishlist-product-card:hover .wishlist-product-image {
+  transform: scale(1.05);
+}
+
+.wishlist-product-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+}
+
+.wishlist-product-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+}
+
+.wishlist-product-card:hover .wishlist-product-name {
+  color: #667eea;
+}
+
+.wishlist-product-price {
+  margin-bottom: 1.5rem;
+}
+
+.wishlist-current-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.wishlist-original-price {
+  font-size: 1rem;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+}
+
+.wishlist-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-wishlist-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.btn-wishlist-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  color: white;
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.btn-wishlist-secondary {
+  background: transparent;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.btn-wishlist-secondary:hover {
+  transform: translateY(-2px);
+  background: #e74c3c;
+  color: white;
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+}
+
+.empty-wishlist {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  margin: 2rem 0;
+}
+
+.empty-wishlist-icon {
+  font-size: 4rem;
+  color: #667eea;
+  margin-bottom: 1.5rem;
+}
+
+.empty-wishlist-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.empty-wishlist-text {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.btn-browse {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-browse:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  color: white;
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+@media (max-width: 768px) {
+  .wishlist-header {
+    padding: 1.5rem 1.5rem 0.75rem 1.5rem;
+  }
+  
+  .wishlist-title {
+    font-size: 2rem;
+  }
+  
+  .wishlist-subtitle {
+    font-size: 1rem;
+  }
+  
+  .wishlist-content {
+    padding: 0.75rem 1.5rem 2rem 1.5rem;
+  }
+  
+  .wishlist-product-image {
+    height: 180px;
+  }
+  
+  .wishlist-actions {
+    flex-direction: column;
+  }
+  
+  .btn-wishlist-primary,
+  .btn-wishlist-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<div class="container">
+  {% if products %}
+    <div class="wishlist-container">
+      <div class="wishlist-header">
+        <h1 class="wishlist-title">My Wishlist</h1>
+        <p class="wishlist-subtitle">Your saved favorite spices</p>
+      </div>
+      <div class="wishlist-content">
+        <div class="row g-4">
+      {% for p in products %}
+      <div class="col-12 col-md-6 col-lg-4">
+              <div class="wishlist-product-card">
+          {% if p.thumbnail %}
+                  <img src="{{ p.thumbnail.url }}" class="wishlist-product-image" alt="{{ p.name }}">
+                {% else %}
+                  <img src="{% static 'img/products/Whole spices/cardamom-thumb.webp' %}" class="wishlist-product-image" alt="{{ p.name }}">
+          {% endif %}
+                <div class="wishlist-product-content">
+                  <h5 class="wishlist-product-name">{{ p.name }}</h5>
+                  <div class="wishlist-product-price">
+              {% if p.sale_price %}
+                      <span class="wishlist-current-price">₹{{ p.sale_price }}</span>
+                      <span class="wishlist-original-price">₹{{ p.mrp }}</span>
+              {% else %}
+                      <span class="wishlist-current-price">₹{{ p.mrp }}</span>
+              {% endif %}
+            </div>
+                  <div class="wishlist-actions">
+                    <a href="{% url 'cart:wishlist_move_to_cart' p.id %}" class="btn-wishlist-primary">
+                      <i class="bi bi-cart-plus me-2"></i>Move to Cart
+                    </a>
+                    <a href="{% url 'cart:wishlist_remove' p.id %}" class="btn-wishlist-secondary">
+                      <i class="bi bi-heart-fill me-2"></i>Remove
+                    </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="empty-wishlist">
+      <div class="empty-wishlist-icon">
+        <i class="bi bi-heart"></i>
+      </div>
+      <h3 class="empty-wishlist-title">Your Wishlist is Empty</h3>
+      <p class="empty-wishlist-text">
+        Start building your collection of favorite spices!<br>
+        Browse our products and add items you love to your wishlist.
+      </p>
+      <a href="{% url 'catalog:product_list' %}" class="btn-browse">
+        <i class="bi bi-shop me-2"></i>Browse Products
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,473 @@
+{% extends 'base.html' %}
+{% block title %}Payment · Masala Story{% endblock %}
+{% block header %}Secure Payment{% endblock %}
+{% block content %}
+<style>
+.payment-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+}
+
+.payment-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.payment-body {
+  padding: 2rem;
+}
+
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+.form-control.is-valid {
+  border-color: #27ae60;
+  box-shadow: 0 0 0 0.2rem rgba(39, 174, 96, 0.25);
+}
+
+.invalid-feedback {
+  display: block;
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.valid-feedback {
+  display: block;
+  color: #27ae60;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.payment-methods {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.payment-method {
+  width: 60px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-pay {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-pay:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.btn-pay:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.total-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #27ae60;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .payment-body {
+    padding: 1.5rem;
+  }
+  
+  .payment-methods {
+    gap: 0.5rem;
+  }
+  
+  .payment-method {
+    width: 50px;
+    height: 35px;
+  }
+}
+</style>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="payment-container">
+      <div class="payment-header">
+        <h4 class="mb-2">
+          <i class="bi bi-shield-check me-2"></i>Secure Payment
+        </h4>
+        <p class="mb-0 opacity-90">Your payment information is encrypted and secure</p>
+      </div>
+      
+      <div class="payment-body">
+        <div class="payment-methods">
+          <div class="payment-method" title="Visa">
+            <svg width="40" height="25" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="40" rx="6" fill="#F5F5F5"/><text x="12" y="26" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="18" fill="#1A1F71">VISA</text></svg>
+          </div>
+          <div class="payment-method" title="Mastercard">
+            <svg width="40" height="25" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="40" rx="6" fill="#F5F5F5"/><circle cx="28" cy="20" r="10" fill="#EB001B"/><circle cx="36" cy="20" r="10" fill="#F79E1B"/></svg>
+          </div>
+          <div class="payment-method" title="American Express">
+            <svg width="40" height="25" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="40" rx="6" fill="#2E77BC"/><text x="6" y="24" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="10" fill="#fff">AMERICAN</text><text x="6" y="33" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="10" fill="#fff">EXPRESS</text></svg>
+          </div>
+          <div class="payment-method" title="RuPay">
+            <svg width="40" height="25" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="40" rx="6" fill="#F5F5F5"/><text x="10" y="24" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#1A1F71">Ru</text><text x="26" y="24" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="12" fill="#F79E1B">Pay</text></svg>
+          </div>
+        </div>
+
+        <form method="post" action="" id="paymentForm" novalidate>
+          {% csrf_token %}
+          
+          <!-- Error Messages -->
+          <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span id="errorMessage"></span>
+          </div>
+          
+          <!-- Success Messages -->
+          <div id="successAlert" class="alert alert-success d-none" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span id="successMessage"></span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Name on Card</label>
+            <input type="text" class="form-control" name="card_name" id="cardName" placeholder="Enter full name as on card" required>
+            <div class="invalid-feedback" id="cardNameError"></div>
+            <div class="valid-feedback" id="cardNameSuccess"></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Card Number</label>
+            <input type="text" class="form-control" name="card_number" id="cardNumber" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+            <div class="invalid-feedback" id="cardNumberError"></div>
+            <div class="valid-feedback" id="cardNumberSuccess"></div>
+            <div class="form-text">
+              <i class="bi bi-shield-lock me-1"></i>We accept major credit/debit cards
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Expiry Date</label>
+              <input type="text" class="form-control" name="expiry" id="expiry" placeholder="MM/YY" inputmode="numeric" maxlength="5" required>
+              <div class="invalid-feedback" id="expiryError"></div>
+              <div class="valid-feedback" id="expirySuccess"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">CVV</label>
+              <input type="password" class="form-control" name="cvv" id="cvv" inputmode="numeric" maxlength="3" placeholder="123" required>
+              <div class="invalid-feedback" id="cvvError"></div>
+              <div class="valid-feedback" id="cvvSuccess"></div>
+              <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>3 digits on back of card
+              </div>
+            </div>
+          </div>
+
+          <div class="total-section">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="mb-1">Total Amount</h5>
+                <small class="text-muted">Including all taxes and fees</small>
+              </div>
+              <div class="h4 mb-0 text-primary fw-bold">₹{{ total|default:0 }}</div>
+            </div>
+          </div>
+
+          <button class="btn btn-pay" type="submit" id="payButton">
+            <i class="bi bi-lock me-2"></i>Pay Securely
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4">
+      <a href="{% url 'cart:view' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to Cart
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const form = document.getElementById('paymentForm');
+  const cardName = document.getElementById('cardName');
+  const cardNumber = document.getElementById('cardNumber');
+  const expiry = document.getElementById('expiry');
+  const cvv = document.getElementById('cvv');
+  const payButton = document.getElementById('payButton');
+  const errorAlert = document.getElementById('errorAlert');
+  const successAlert = document.getElementById('successAlert');
+
+  // Utility functions
+  const showError = (message) => {
+    errorAlert.classList.remove('d-none');
+    successAlert.classList.add('d-none');
+    document.getElementById('errorMessage').textContent = message;
+  };
+
+  const showSuccess = (message) => {
+    successAlert.classList.remove('d-none');
+    errorAlert.classList.add('d-none');
+    document.getElementById('successMessage').textContent = message;
+  };
+
+  const hideAlerts = () => {
+    errorAlert.classList.add('d-none');
+    successAlert.classList.add('d-none');
+  };
+
+  const setFieldValid = (field, isValid, message) => {
+    const errorElement = document.getElementById(field.id + 'Error');
+    const successElement = document.getElementById(field.id + 'Success');
+    
+    field.classList.remove('is-valid', 'is-invalid');
+    errorElement.textContent = '';
+    successElement.textContent = '';
+    
+    if (isValid) {
+      field.classList.add('is-valid');
+      successElement.textContent = message || 'Looks good!';
+    } else {
+      field.classList.add('is-invalid');
+      errorElement.textContent = message;
+    }
+  };
+
+  // Luhn algorithm for card validation
+  const luhnCheck = (numStr) => {
+    if (!/^[0-9]+$/.test(numStr)) return false;
+    let sum = 0;
+    let isEven = false;
+    for (let i = numStr.length - 1; i >= 0; i--) {
+      let digit = parseInt(numStr.charAt(i));
+      if (isEven) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+      isEven = !isEven;
+    }
+    return sum % 10 === 0;
+  };
+
+  // Test card numbers that pass Luhn validation
+  const testCardNumbers = [
+    '4111111111111111', // Visa test
+    '5555555555554444', // Mastercard test
+    '378282246310005',  // AmEx test
+    '6011111111111117', // Discover test
+    '4000000000000002', // Visa test
+    '4242424242424242'  // Visa test
+  ];
+
+  // Card type detection
+  const getCardType = (number) => {
+    const num = number.replace(/\s/g, '');
+    if (/^4/.test(num)) return 'Visa';
+    if (/^5[1-5]/.test(num)) return 'Mastercard';
+    if (/^3[47]/.test(num)) return 'American Express';
+    if (/^6/.test(num)) return 'Discover';
+    if (/^8/.test(num)) return 'RuPay';
+    return 'Unknown';
+  };
+
+  // Name validation
+  cardName.addEventListener('input', function() {
+    const value = this.value.trim();
+    if (value.length < 2) {
+      setFieldValid(this, false, 'Name must be at least 2 characters');
+    } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+      setFieldValid(this, false, 'Name can only contain letters and spaces');
+    } else {
+      setFieldValid(this, true, 'Valid name');
+    }
+  });
+
+  // Card number formatting and validation
+  cardNumber.addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '').slice(0, 16); // Limit to 16 digits
+    
+    // Format as 4-4-4-4 for all cards
+    this.value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+    // Validation
+    const cleanNumber = value;
+    
+    if (cleanNumber.length < 16) {
+      setFieldValid(this, false, 'Card number must be exactly 16 digits');
+    } else {
+      setFieldValid(this, true, 'Valid card number');
+    }
+  });
+
+  // Expiry date formatting and validation
+  expiry.addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '').slice(0, 4);
+    
+    if (value.length >= 2) {
+      this.value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    } else {
+      this.value = value;
+    }
+
+    // Validation
+    const expMatch = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(this.value);
+    if (!expMatch) {
+      setFieldValid(this, false, 'Invalid format (MM/YY)');
+      return;
+    }
+
+    const month = parseInt(expMatch[1], 10);
+    const year = parseInt(expMatch[2], 10) + 2000;
+    const now = new Date();
+    const expDate = new Date(year, month, 0); // Last day of expiry month
+
+    if (expDate < now) {
+      setFieldValid(this, false, 'Card has expired');
+    } else {
+      setFieldValid(this, true, 'Valid expiry date');
+    }
+  });
+
+  // CVV validation
+  cvv.addEventListener('input', function() {
+    const value = this.value.replace(/\D/g, '').slice(0, 3); // Limit to 3 digits
+    this.value = value;
+
+    if (value.length < 3) {
+      setFieldValid(this, false, 'CVV must be exactly 3 digits');
+    } else {
+      setFieldValid(this, true, 'Valid CVV');
+    }
+  });
+
+  // Form submission
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    hideAlerts();
+
+    // Get values
+    const name = cardName.value.trim();
+    const number = cardNumber.value.replace(/\s/g, '');
+    const exp = expiry.value.trim();
+    const cv = cvv.value.trim();
+
+    // Validate all fields
+    let isValid = true;
+    let errorMessages = [];
+
+    // Name validation
+    if (name.length < 2) {
+      isValid = false;
+      errorMessages.push('Please enter a valid name');
+    }
+
+    // Card number validation
+    if (number.length !== 16) {
+      isValid = false;
+      errorMessages.push('Card number must be exactly 16 digits');
+    }
+
+    // Expiry validation
+    const expMatch = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(exp);
+    if (!expMatch) {
+      isValid = false;
+      errorMessages.push('Please enter a valid expiry date (MM/YY)');
+    } else {
+      const month = parseInt(expMatch[1], 10);
+      const year = parseInt(expMatch[2], 10) + 2000;
+      const now = new Date();
+      const expDate = new Date(year, month, 0);
+      if (expDate < now) {
+        isValid = false;
+        errorMessages.push('Card has expired');
+      }
+    }
+
+    // CVV validation
+    if (cv.length !== 3) {
+      isValid = false;
+      errorMessages.push('CVV must be exactly 3 digits');
+    }
+
+    if (!isValid) {
+      showError(errorMessages.join('. '));
+      return;
+    }
+
+    // Show loading state
+    payButton.disabled = true;
+    payButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+
+    // Submit the form to process payment
+    form.submit();
+  });
+
+  // Real-time validation on blur
+  [cardName, cardNumber, expiry, cvv].forEach(field => {
+    field.addEventListener('blur', function() {
+      if (this.value.trim()) {
+        // Trigger validation
+        this.dispatchEvent(new Event('input'));
+      }
+    });
+  });
+})();
+</script>
+{% endblock %}
+

@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+{% block title %}Products · Masala Story{% endblock %}
+{% block header %}Our Spice Collection{% endblock %}
+{% block content %}
+<style>
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Featured-style product container (match home featured cards) */
+.product-container-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+  height: 420px; /* uniform card height on desktop */
+  display: flex;
+  flex-direction: column;
+}
+
+.product-container-box:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  border-color: #667eea;
+}
+
+.product-image-container {
+  position: relative;
+  height: 200px; /* fixed image band */
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.product-container-box:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-content {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-name a {
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.product-name a:hover {
+  color: #667eea;
+}
+
+.product-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.category-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.current-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.original-price {
+  font-size: 1.1rem;
+  color: #95a5a6;
+  text-decoration: line-through;
+}
+
+.stock-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+  width: fit-content;
+}
+
+.stock-badge.in-stock {
+  background: #27ae60;
+  color: white;
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.3);
+}
+
+.stock-badge.out-of-stock {
+  background: #e74c3c;
+  color: white;
+  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);
+}
+
+.sale-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: #e74c3c;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.view-product-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-top: auto;
+}
+
+.view-product-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  color: white;
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.filter-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.filter-btn {
+  background: #667eea;
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: #5a6fd8;
+  transform: translateY(-1px);
+}
+
+.reset-btn {
+  background: #6c757d;
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.results-count {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.category-context {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #495057;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* Enhancements */
+/* Product card interactions */
+.product-card {
+  border: 1px solid #e9ecef;
+}
+
+.product-card:focus-within {
+  outline: 3px solid rgba(102, 126, 234, 0.35);
+  outline-offset: 2px;
+}
+
+/* Image hover zoom */
+.product-card .product-image {
+  transition: transform 0.35s ease;
+}
+.product-card:hover .product-image {
+  transform: scale(1.04);
+}
+
+/* Sale badge polish */
+.sale-badge {
+  box-shadow: 0 6px 18px rgba(231, 76, 60, 0.35);
+  letter-spacing: 0.3px;
+}
+
+/* Title/link hover */
+.product-title a {
+  color: #2c3e50;
+}
+.product-title a:hover {
+  color: #667eea;
+}
+
+/* Filter panel behavior (collapsible) */
+.filter-panel {
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.filter-panel:not(.show) {
+  max-height: 0;
+}
+.filter-panel.show {
+  max-height: 1000px; /* enough to reveal contents */
+}
+
+/* Tweak buttons */
+.btn-outline-secondary#toggle-filters {
+  border-width: 2px;
+}
+.btn-outline-secondary#toggle-filters:hover {
+  background: #f1f3f5;
+}
+
+/* Minor spacing consistency */
+.product-info .badge {
+  border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .product-container-box { height: 380px; }
+  .product-info { padding: 1rem; }
+  .results-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+</style>
+
+<div class="container-fluid">
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="d-flex justify-content-start align-items-center mb-3">
+      <button id="toggle-filters" class="btn btn-outline-secondary" type="button">
+        <i class="bi bi-funnel me-2"></i>Toggle Filters
+      </button>
+    </div>
+    
+    <div id="filters-panel" class="filter-panel">
+      <form method="get">
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <label class="form-label fw-semibold">Search Products</label>
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control search-input" placeholder="Search by name..." />
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fw-semibold">Category</label>
+            <select class="form-select" name="category">
+              <option value="">All Categories</option>
+              {% for c in categories %}
+                <option value="{{ c.slug }}" {% if active_category == c.slug %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="form-label fw-semibold">Min Price</label>
+            <input type="number" step="1" name="price_min" value="{{ request.GET.price_min }}" class="form-control" placeholder="₹0" />
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="form-label fw-semibold">Max Price</label>
+            <input type="number" step="1" name="price_max" value="{{ request.GET.price_max }}" class="form-control" placeholder="₹1000" />
+          </div>
+          <div class="col-12 col-md-1 d-flex align-items-end">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="on_sale" value="1" id="on_sale" {% if request.GET.on_sale == '1' %}checked{% endif %}>
+              <label class="form-check-label fw-semibold" for="on_sale">On Sale</label>
+            </div>
+          </div>
+        </div>
+        <div class="row g-3 mt-3">
+          <div class="col-12 col-md-3">
+            <label class="form-label fw-semibold">Sort By</label>
+            <select class="form-select" name="sort">
+              <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name A-Z</option>
+              <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Price: Low to High</option>
+              <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Price: High to Low</option>
+            </select>
+          </div>
+          <div class="col d-flex align-items-end">
+            <div class="d-flex gap-2">
+              <button class="btn filter-btn" type="submit">
+                <i class="bi bi-search me-2"></i>Apply Filters
+              </button>
+              <a class="btn reset-btn" href="{% url 'catalog:product_list' %}">
+                <i class="bi bi-arrow-clockwise me-2"></i>Reset
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Results Header -->
+  {% if products %}
+    <div class="results-header">
+      <div class="results-count">{{ products|length }} product{{ products|length|pluralize }} found</div>
+      {% if active_category %}
+        <div class="category-context">in <strong>{{ active_category|title }}</strong></div>
+      {% endif %}
+    </div>
+
+    <!-- Products Grid -->
+    <div class="product-grid">
+      {% for p in products %}
+        <div class="product-container-box">
+          <div class="product-image-container">
+            {% if p.thumbnail %}
+              <img src="{{ p.thumbnail.url }}" class="product-image" alt="{{ p.name }}" />
+            {% else %}
+              <div class="d-flex align-items-center justify-content-center product-image text-muted">
+                <i class="bi bi-image" style="font-size: 3rem;"></i>
+              </div>
+            {% endif %}
+            {% if p.sale_price %}
+              <div class="sale-badge">
+                <i class="bi bi-percent me-1"></i>Sale
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="product-content">
+            <h5 class="product-name">
+              <a class="text-decoration-none" href="{% url 'catalog:product_detail' slug=p.slug %}">{{ p.name }}</a>
+            </h5>
+            
+            <div class="product-meta">
+              <span class="category-badge">{{ p.category.name }}</span>
+              {% if p.stock_quantity > 0 %}
+                <span class="stock-badge in-stock">
+                  <i class="bi bi-check-circle me-1"></i>{{ p.stock_quantity }} in stock
+                </span>
+              {% else %}
+                <span class="stock-badge out-of-stock">
+                  <i class="bi bi-x-circle me-1"></i>Out of stock
+                </span>
+              {% endif %}
+            </div>
+            
+            <div class="product-price">
+              {% if p.sale_price %}
+                <span class="current-price">₹{{ p.sale_price }}</span>
+                <span class="original-price">₹{{ p.mrp }}</span>
+              {% else %}
+                <span class="current-price">₹{{ p.mrp }}</span>
+              {% endif %}
+            </div>
+            
+            <a href="{% url 'catalog:product_detail' slug=p.slug %}" class="view-product-btn">
+              <i class="bi bi-eye me-2"></i>View Details
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-search empty-icon"></i>
+      <h4 class="empty-title">No products found</h4>
+      <p class="empty-text">Try adjusting your search criteria or browse all products.</p>
+      <a href="{% url 'catalog:product_list' %}" class="btn filter-btn">
+        <i class="bi bi-arrow-clockwise me-2"></i>View All Products
+      </a>
+    </div>
+  {% endif %}
+</div>
+<script>
+  (function(){
+    var toggleBtn = document.getElementById('toggle-filters');
+    var panel = document.getElementById('filters-panel');
+    if(!toggleBtn || !panel){ return; }
+    function render(){
+      var open = panel.classList.contains('show');
+      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggleBtn.innerHTML = open ? '<i class="bi bi-x-lg me-2"></i>Hide Filters' : '<i class="bi bi-funnel me-2"></i>Filter Products';
+    }
+    toggleBtn.addEventListener('click', function(){
+      if(panel.classList.contains('show')){ panel.classList.remove('show'); }
+      else { panel.classList.add('show'); }
+      render();
+    });
+    render();
+  })();
+</script>
+{% endblock %}
